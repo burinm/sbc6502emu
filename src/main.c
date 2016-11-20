@@ -8,6 +8,8 @@
 #include <sys/stat.h>
 
 #include "M6502.h"
+#include "E6522.h"
+#include "6522.h"
 
 
 // Ram/Rom descriptions, all point to same main memory
@@ -29,8 +31,10 @@ typedef struct {
 #define RTS         0x60 //Return from Subroutine
 
 
+// Emulation memory mapped devices
 static memory_6502_t memory_sram;
 static memory_6502_t memory_rom;
+static memory_6502_t via0_ram;
 uint8_t*  memory;
 
 void *runCPU(void *p);
@@ -61,6 +65,13 @@ memory_rom.memory=memory;
 memory_rom.size=ROM_SIZE;
 memory_rom.start=ROM_START;
 memory_rom.desc="8K-main-rom";
+
+//Initialize VIAs
+via0_ram.memory=memory;
+via0_ram.size=0,DEVICE_6522_NUM_REG;
+via0_ram.start=VIA_0_START;
+via0_ram.desc="VIA0";
+device_6522_init((uint8_t*)(via0_ram.memory + via0_ram.start));
 
 //Load rom
 load_rom("sbc.rom", 0xe000, &memory_rom);
@@ -116,6 +127,11 @@ void Wr6502(register word Addr,register byte Value)
         //printf("write ram %04x:%02x\n",Addr,*(uint8_t *)(memory_sram.memory + Addr));
     }
 
+    if (Addr >= via0_ram.start && Addr < via0_ram.start + via0_ram.size ) { 
+        *(uint8_t *)(via0_ram.memory + Addr) = Value;
+        //printf("write via0_ram %04x:%02x\n",Addr,*(uint8_t *)(via0_ram.memory + Addr));
+    }
+
     if (Addr >= memory_rom.start && Addr < memory_rom.start + memory_rom.size ) { 
         printf("write rom !! %04x:%02x error\n",Addr,*(uint8_t *)(memory_rom.memory + Addr));
     }
@@ -126,6 +142,11 @@ byte Rd6502(register word Addr)
     if (Addr >= memory_sram.start && Addr < memory_sram.start + memory_sram.size ) { 
         //printf("read ram %04x:%02x\n",Addr,*(uint8_t *)(memory_sram.memory + Addr));
         return *(uint8_t *)(memory_sram.memory + Addr);
+    }
+
+    if (Addr >=  via0_ram.start && Addr <  via0_ram.start +  via0_ram.size ) { 
+        //printf("read  via0_ram %04x:%02x\n",Addr,*(uint8_t *)( via0_ram.memory + Addr));
+        return *(uint8_t *)( via0_ram.memory + Addr);
     }
 
     if (Addr >= memory_rom.start && Addr < memory_rom.start + memory_rom.size ) { 

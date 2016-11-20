@@ -1,0 +1,4 @@
+#!/bin/bash
+find -iname "*.h" -or -iname "*.c" -or -iname "*.s" -or -name Makfile > cscope.files
+cscope -b
+ctags -L ./cscope.files
