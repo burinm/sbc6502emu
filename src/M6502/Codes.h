@@ -224,7 +224,9 @@ case 0xE1: MR_Ix(I);M_SBC(I);break;       /* SBC ($ss,x) INDEXINDIR */
 case 0xF1: MR_Iy(I);M_SBC(I);break;       /* SBC ($ss),y INDIRINDEX */
 
 case 0x0A: M_ASL(R->A);break;             /* ASL a ACC */
+case 0x1A: R->A++;M_FL(R->A);break;          /* INC */ //burin
 case 0x2A: M_ROL(R->A);break;             /* ROL a ACC */
+case 0x3A: R->A--;M_FL(R->A);break;          /* DEC */ //burin
 case 0x4A: M_LSR(R->A);break;             /* LSR a ACC */
 case 0x6A: M_ROR(R->A);break;             /* ROR a ACC */
 

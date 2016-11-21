@@ -4,7 +4,11 @@ vpath %.c ./M6502
 vpath %.h ../../ecen5013/src/driver
 vpath %.c ../../ecen5013/src/driver
 
-SOURCES :=  main.c E6522.c M6502.c Debug.c
+#Gui component
+SDL_LIB = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
+SDL_INCLUDE = -I/usr/local/include
+
+SOURCES :=  main.c E6522.c M6502.c Debug.c console.c
 OBJS := $(SOURCES:%.c=%.o)
 
 CC := /usr/bin/gcc
@@ -21,10 +25,13 @@ endif
 
 # little endian machine
 CFLAGS += -DLSB_FIRST
+# PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+CFLAGS += -D_GNU_SOURCE
+
+LDFLAGS := $(SDL_LIB)
 
 sbc_emu: $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-	cp ~/ecen5013/sbc/out.bin sbc.rom
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) $< -c -o $@
