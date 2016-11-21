@@ -22,11 +22,15 @@ endif
 # little endian machine
 CFLAGS += -DLSB_FIRST
 
-sbc: $(OBJS)
+sbc_emu: $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	cp ~/ecen5013/sbc/out.bin sbc.rom
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) $< -c -o $@
 
 clean:
-	rm -rf *.o sbc
+	rm -rf *.o sbc_emu
+
+getrom:
+	cp ~/ecen5013/sbc/out.bin sbc.rom

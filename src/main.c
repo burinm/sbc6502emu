@@ -68,7 +68,7 @@ memory_rom.desc="8K-main-rom";
 
 //Initialize VIAs
 via0_ram.memory=memory;
-via0_ram.size=0,DEVICE_6522_NUM_REG;
+via0_ram.size=DEVICE_6522_NUM_REG;
 via0_ram.start=VIA_0_START;
 via0_ram.desc="VIA0";
 device_6522_init((uint8_t*)(via0_ram.memory + via0_ram.start));
@@ -129,7 +129,7 @@ void Wr6502(register word Addr,register byte Value)
 
     if (Addr >= via0_ram.start && Addr < via0_ram.start + via0_ram.size ) { 
         *(uint8_t *)(via0_ram.memory + Addr) = Value;
-        //printf("write via0_ram %04x:%02x\n",Addr,*(uint8_t *)(via0_ram.memory + Addr));
+        printf("write via0_ram %04x:%02x\n",Addr,*(uint8_t *)(via0_ram.memory + Addr));
     }
 
     if (Addr >= memory_rom.start && Addr < memory_rom.start + memory_rom.size ) { 
