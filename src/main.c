@@ -9,6 +9,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <time.h>
+
 // GUI component
 #include <SDL2/SDL.h>
 #include "console.h"
@@ -41,6 +43,11 @@ uint8_t green_led_array_portb;
 #define ROM_START   0xe000
 
 #define RTS         0x60 //Return from Subroutine
+
+// Not sure how to emulate without an SPI engine...
+// FRAM 8K
+//#define FRAM_SIZE   ( 8 * 1024)
+//uint8_t* fram;
 
 
 // Emulation memory mapped devices
@@ -114,8 +121,12 @@ via0_ram.start=VIA_0_START;
 via0_ram.desc="VIA0";
 device_6522_init((uint8_t*)(via0_ram.memory + via0_ram.start));
 
+//Initialize FRAM
+//fram=(uint8_t*)calloc(FRAM_SIZE,1);
+
 //Load rom
-load_rom("sbc.rom", 0xe000, &memory_rom);
+//load_rom("sbc.rom", 0xe000, &memory_rom);
+load_rom("rom.bin", 0x0200, &memory_rom);
 
 //Set machine to running
 sbc_status=SBC_RUNNING;
@@ -222,7 +233,7 @@ void Wr6502(register word Addr,register byte Value)
         MEM_LOCK
         green_led_array_portb = *(uint8_t*)(via0_ram.memory + via0_ram.start + DEVICE_6522_REG_RB);
         green_led_array_porta = *(uint8_t*)(via0_ram.memory + via0_ram.start + DEVICE_6522_REG_RA);
-printf("greena %x green b %x\n",green_led_array_porta, green_led_array_portb);
+        //printf("greena %x green b %x\n",green_led_array_porta, green_led_array_portb);
         MEM_UNLOCK
     }
 
@@ -241,7 +252,7 @@ byte Rd6502(register word Addr)
     }
 
     if (Addr >=  via0_ram.start && Addr <  via0_ram.start +  via0_ram.size ) { 
-        //printf("read  via0_ram %04x:%02x\n",Addr,*(uint8_t *)( via0_ram.memory + Addr));
+        printf("read  via0_ram %04x:%02x\n",Addr,*(uint8_t *)(via0_ram.memory + Addr));
         return *(uint8_t *)( via0_ram.memory + Addr);
     }
 
@@ -260,9 +271,14 @@ byte Rd6502(register word Addr)
 
 byte Loop6502(register M6502 *R)
 {
+uint32_t i;
+
     //Input/Interrupts 
 
-    usleep(5000);
+    //nanosleep(&t,NULL);
+    //usleep(1);
+    for (i=0;i<300;i++);
+    
     if (! (sbc_status & SBC_RUNNING) ) return (INT_QUIT);
     return (INT_NONE);
 }
@@ -270,6 +286,8 @@ byte Loop6502(register M6502 *R)
 byte Patch6502(register byte Op,register M6502 *R)
 {
     printf ("unknown opcode 0x%x\n", Op);
+    printM6502(R);
+    printf ("------\n");
     //assert(0);
     return 1;
 }

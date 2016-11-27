@@ -39,5 +39,5 @@ sbc_emu: $(OBJS)
 clean:
 	rm -rf *.o sbc_emu
 
-getrom:
+copy:
 	cp ~/ecen5013/sbc/out.bin sbc.rom

@@ -106,17 +106,17 @@ uint8_t i;
         pthread_mutex_lock(&mem_lock);
     for(i=0;i<8;i++) {    
         if (green_led_array_portb & 1<<i) {
-            drawBox(0,i, 0xFF00FF00);
+            drawBox(0,8-i, 0xFF00FF00);
         } else {
-            drawBox(0,i, 0xFF0000FF);
+            drawBox(0,8-i, 0xFF0000FF);
         }
     }
 
     for(i=0;i<8;i++) {    
         if (green_led_array_porta & 1<<i) {
-            drawBox(1,i, 0xFF00FF00);
+            drawBox(1,8-i, 0xFF00FF00);
         } else {
-            drawBox(1,i, 0xFF0000FF);
+            drawBox(1,8-i, 0xFF0000FF);
         }
     }
         pthread_mutex_unlock(&mem_lock);
