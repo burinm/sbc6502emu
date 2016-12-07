@@ -1,3 +1,8 @@
+/* E6522.c - (c) 2016 - burin
+
+    65c22 I/O expander
+*/
+
 #include "6522.h"
 #include "E6522.h"
 #include <stdlib.h>

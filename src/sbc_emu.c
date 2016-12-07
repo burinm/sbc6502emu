@@ -1,12 +1,15 @@
-/* SBC emulator
+/* sbc_emu - (c) 2015, 2016 - burin
 
-2015 - Micheal Burin - base loop, graphics and SDL routines
-2016 - Micheal Burin - extended for 5613, adding sbc components,
+    Single Board computer emulator
+
+    2015  base loop, graphics and SDL routines
+    2016  extended for 5613, adding sbc components,
 	and replacing gui with blinking LEDs 
 
 	Uses M6502 core by Marat Fayzullin and Alex Krasivsky
 
 */
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -52,7 +55,6 @@ uint8_t green_led_array_portb;
 // FRAM 8K
 //#define FRAM_SIZE   ( 8 * 1024)
 //uint8_t* fram;
-
 
 // Emulation memory mapped devices
 uint8_t*  memory;
@@ -145,13 +147,12 @@ while (sbc_status & SBC_RUNNING) {
 
 pthread_join(cpu_thread,NULL);
 pthread_mutex_destroy(&mem_lock);
-
 console_quit();
 } 
 
+// Implement for M6502
 void *runCPU(void *p)
 {
-
     M6502 *R = malloc(sizeof(M6502));
     printM6502(R);
     Reset6502(R);
@@ -176,6 +177,7 @@ void printM6502(M6502 *R)
 
 //Core CPU functions
 
+// Implement for M6502
 void Wr6502(register word Addr,register byte Value)
 {   
     if (Addr >= memory_sram.start && Addr < memory_sram.start + memory_sram.size ) { 
@@ -198,6 +200,7 @@ void Wr6502(register word Addr,register byte Value)
     }
 }
 
+// Implement for M6502
 byte Rd6502(register word Addr)
 {
     if (Addr >= memory_sram.start && Addr < memory_sram.start + memory_sram.size ) { 
@@ -216,6 +219,7 @@ byte Rd6502(register word Addr)
     }
 }
 
+// Implement for M6502
 /* Unimpelemented. Used for operations that don't need to read memory
  * Future speed enhancement
  *
@@ -223,6 +227,8 @@ byte Rd6502(register word Addr)
  */
 
 //Input/Interrupts 
+
+// Implement for M6502
 byte Loop6502(register M6502 *R)
 {
 uint32_t i;
@@ -235,6 +241,7 @@ uint32_t i;
     return (INT_NONE);
 }
 
+// Implement for M6502
 byte Patch6502(register byte Op,register M6502 *R)
 {
     printf ("unknown opcode 0x%x\n", Op);

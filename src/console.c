@@ -1,3 +1,9 @@
+/* console.c - (c) 2015, 2016 - burin
+
+    Implement a SDL graphics
+    console for an emulator display
+*/
+
 #include <stdio.h>
 #include <sys/stat.h>
 #include <SDL2/SDL.h>
@@ -103,7 +109,8 @@ void drawBox(uint8_t x, uint8_t y,Uint32 c) {
 void drawFrame() {
 uint8_t i;
 
-        pthread_mutex_lock(&mem_lock);
+    // Draw VIA port B
+    pthread_mutex_lock(&mem_lock);
     for(i=0;i<8;i++) {    
         if (green_led_array_portb & 1<<i) {
             drawBox(0,8-i, 0xFF00FF00);
@@ -112,6 +119,7 @@ uint8_t i;
         }
     }
 
+    // Draw VIA port A, as if it had LEDs attached
     for(i=0;i<8;i++) {    
         if (green_led_array_porta & 1<<i) {
             drawBox(1,8-i, 0xFF00FF00);
@@ -119,6 +127,5 @@ uint8_t i;
             drawBox(1,8-i, 0xFF0000FF);
         }
     }
-        pthread_mutex_unlock(&mem_lock);
+    pthread_mutex_unlock(&mem_lock);
 }
-

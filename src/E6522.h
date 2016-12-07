@@ -1,3 +1,8 @@
+/* E6522.h - (c) 2016 - burin
+
+    sbc 65c22 I/O expanders emulation 
+*/
+
 #ifndef __6522EMU_H__
 #define __6522EMU_H__
 
